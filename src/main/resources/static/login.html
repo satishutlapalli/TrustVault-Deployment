@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -179,6 +179,22 @@
             cursor: wait;
         }
 
+        .admin-link {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .admin-link a {
+            color: var(--blue);
+            font-weight: 650;
+            text-decoration: none;
+        }
+
+        .admin-link a:hover {
+            text-decoration: underline;
+        }
+
         .error-message {
             margin-top: 18px;
             padding: 12px;
@@ -234,6 +250,10 @@
                 font-size: 20px;
             }
 
+            .header-text {
+                font-size: 11px;
+            }
+
             .login-card {
                 padding: 29px 23px;
             }
@@ -260,7 +280,10 @@
                 Sign in to continue to your TrustVault workspace.
             </p>
 
-            <div id="loginError" class="error-message" role="alert" hidden>
+            <div id="loginError"
+                 class="error-message"
+                 role="alert"
+                 hidden>
                 Sign-in failed. Check your username and password and try again.
             </div>
 
@@ -274,12 +297,12 @@
                         placeholder="Enter your username"
                         autocomplete="username"
                         required
-                        autofocus
-                    >
+                        autofocus>
                 </div>
 
                 <div class="field">
                     <label for="password">Password</label>
+
                     <div class="password-wrap">
                         <input
                             type="password"
@@ -287,8 +310,8 @@
                             name="password"
                             placeholder="Enter your password"
                             autocomplete="current-password"
-                            required
-                        >
+                            required>
+
                         <button
                             type="button"
                             class="toggle-password"
@@ -298,10 +321,16 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-button" id="loginButton">
+                <button type="submit"
+                        class="submit-button"
+                        id="loginButton">
                     Sign in →
                 </button>
             </form>
+
+            <div class="admin-link">
+                <a href="/admin-login.html">Login as Admin</a>
+            </div>
 
             <p class="register-text">
                 Don't have an account?
@@ -329,19 +358,31 @@
             document.getElementById("loginError").hidden = false;
         }
 
-        document.getElementById("togglePassword").addEventListener("click", function () {
-            const password = document.getElementById("password");
-            const isHidden = password.type === "password";
+        if (params.has("logout")) {
+            const error = document.getElementById("loginError");
+            error.textContent = "You have been logged out successfully.";
+            error.style.background = "#ecfdf3";
+            error.style.color = "#166534";
+            error.style.borderColor = "#bbf7d0";
+            error.hidden = false;
+        }
 
-            password.type = isHidden ? "text" : "password";
-            this.textContent = isHidden ? "Hide" : "Show";
-        });
+        document.getElementById("togglePassword")
+            .addEventListener("click", function () {
+                const password = document.getElementById("password");
+                const isHidden = password.type === "password";
 
-        document.getElementById("loginForm").addEventListener("submit", function () {
-            const button = document.getElementById("loginButton");
-            button.disabled = true;
-            button.textContent = "Signing in...";
-        });
+                password.type = isHidden ? "text" : "password";
+                this.textContent = isHidden ? "Hide" : "Show";
+            });
+
+        document.getElementById("loginForm")
+            .addEventListener("submit", function () {
+                const button = document.getElementById("loginButton");
+                button.disabled = true;
+                button.textContent = "Signing in...";
+            });
     </script>
 </body>
 </html>
+```
