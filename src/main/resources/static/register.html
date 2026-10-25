@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | TrustVault</title>
+
+    <style>
+        :root {
+            --navy: #102347;
+            --blue: #315efb;
+            --text: #1b2940;
+            --muted: #738096;
+            --border: #dfe6f0;
+            --bg: #f5f8fd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        header {
+            height: 76px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--navy);
+            font-size: 23px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--navy);
+            color: white;
+            font-size: 22px;
+        }
+
+        .header-link {
+            color: var(--muted);
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .header-link span {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 38px 18px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 470px;
+            padding: 36px 40px;
+            background: white;
+            border: 1px solid #e6ebf3;
+            border-radius: 20px;
+            box-shadow: 0 20px 55px rgba(16, 35, 71, 0.08);
+        }
+
+        .icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: #edf2ff;
+            color: var(--blue);
+            font-size: 27px;
+        }
+
+        h1 {
+            margin-top: 22px;
+            color: var(--navy);
+            font-size: 29px;
+            letter-spacing: -0.7px;
+        }
+
+        .subtitle {
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .field {
+            margin-top: 19px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #28364c;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            height: 47px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            color: var(--text);
+            background: white;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.11);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 62px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .hint {
+            margin-top: 7px;
+            color: #8590a2;
+            font-size: 11px;
+        }
+
+        .submit-button {
+            width: 100%;
+            height: 49px;
+            margin-top: 25px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--blue);
+            color: white;
+            font-size: 15px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background: #244ce0;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .message {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 9px;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .error {
+            color: #a52727;
+            background: #fff0f0;
+            border: 1px solid #ffd4d4;
+        }
+
+        .success {
+            color: #146c43;
+            background: #ecfdf3;
+            border: 1px solid #b7ebcb;
+        }
+
+        .login-text {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .login-text a {
+            color: var(--blue);
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
+        .privacy-note {
+            margin-top: 24px;
+            padding-top: 17px;
+            border-top: 1px solid #edf0f6;
+            color: #8590a2;
+            font-size: 11px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            color: #8490a3;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            header {
+                height: 68px;
+                padding: 0 20px;
+            }
+
+            .brand {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 28px 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="brand">
+            <span class="logo" aria-hidden="true">✓</span>
+            TrustVault
+        </a>
+
+        <a href="/login.html" class="header-link">
+            Already a member? <span>Sign in</span>
+        </a>
+    </header>
+
+    <main>
+        <section class="card">
+            <div class="icon" aria-hidden="true">♙</div>
+
+            <h1>Create your account</h1>
+            <p class="subtitle">
+                Set up your TrustVault account to access your document workspace.
+            </p>
+
+            <div id="message" class="message" role="status" hidden></div>
+
+            <form id="registerForm">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        placeholder="Choose a username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="email">Email address</label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="password-wrap">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required
+                        >
+                        <button type="button" class="show-password"
+                                id="togglePassword">
+                            Show
+                        </button>
+                    </div>
+                    <p class="hint">Use at least 8 characters.</p>
+                </div>
+
+                <button type="submit" class="submit-button" id="submitButton">
+                    Create account →
+                </button>
+            </form>
+
+            <p class="login-text">
+                Already have an account?
+                <a href="/login.html">Sign in</a>
+            </p>
+
+            <div class="privacy-note">
+                Create your account to get started with TrustVault.
+                Never share your password with anyone.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © <span id="year"></span> TrustVault · Document management workspace
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const password = document.getElementById("password");
+            const isHidden = password.type === "password";
+
+            password.type = isHidden ? "text" : "password";
+            this.textContent = isHidden ? "Hide" : "Show";
+        });
+
+        const form = document.getElementById("registerForm");
+        const message = document.getElementById("message");
+        const submitButton = document.getElementById("submitButton");
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            message.hidden = true;
+            submitButton.disabled = true;
+            submitButton.textContent = "Creating account...";
+
+            const data = {
+                username: document.getElementById("username").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                password: document.getElementById("password").value
+            };
+
+            try {
+                const response = await fetch("/api/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                message.className = "message " +
+                    (response.ok ? "success" : "error");
+                message.textContent = result.message ||
+                    (response.ok
+                        ? "Account created successfully."
+                        : "Could not create account. Please check your details.");
+                message.hidden = false;
+
+                if (response.ok) {
+                    form.reset();
+                    submitButton.textContent = "Account created";
+
+                    setTimeout(function () {
+                        window.location.href = "/login.html";
+                    }, 1500);
+                }
+            } catch (error) {
+                message.className = "message error";
+                message.textContent =
+                    "Unable to connect to the server. Please check that TrustVault is running.";
+                message.hidden = false;
+            } finally {
+                if (submitButton.textContent !== "Account created") {
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Create account →";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+target/
+.classpath
+.project
+.settings/
+.vscode/
+*.log
+.env
+.env.*
+!.env.example
+application-local.properties
+application-prod.properties
+application-secret.properties
+uploads/
+TrustVaultUploads/
+
+startup-error.txt

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TrustVault Admin</title>
+  <style>
+    :root {
+      --bg: #0b1020; --panel: #131b2e; --panel2: #18233b;
+      --border: #293651; --text: #edf2ff; --muted: #9aa9c5;
+      --blue: #6687ff; --violet: #a78bfa; --green: #4ade80;
+      --red: #fb7185; --amber: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--text); }
+    header { display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; padding:22px 5vw; background:#10182a; border-bottom:1px solid var(--border); }
+    header h1 { margin:0; font-size:clamp(1.35rem, 3vw, 1.8rem); }
+    header p { margin:7px 0 0; color:var(--muted); }
+    a { color:#b9c7ff; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    main { max-width:1200px; margin:28px auto; padding:0 20px 40px; }
+    #status { margin-bottom:18px; padding:12px 14px; background:var(--panel2); border:1px solid var(--border); border-radius:10px; color:var(--muted); }
+    .cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:22px; }
+    .card, section { background:var(--panel); border:1px solid var(--border); border-radius:15px; padding:20px; margin-bottom:20px; box-shadow:0 12px 30px #00000018; }
+    .card p { color:var(--muted); margin:0 0 12px; }
+    .number { font-size:30px; font-weight:750; color:var(--blue); }
+    h2 { margin:0 0 10px; font-size:1.25rem; }
+    .hint { color:var(--muted); margin:0 0 16px; line-height:1.5; }
+    .table-wrap { width:100%; overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; min-width:720px; }
+    th, td { text-align:left; padding:12px 10px; border-bottom:1px solid var(--border); overflow-wrap:anywhere; vertical-align:middle; }
+    th { color:#c9d5ef; font-size:.88rem; font-weight:650; }
+    td { color:#e4eaf8; }
+    .status-pill { display:inline-block; padding:5px 9px; border-radius:999px; font-size:.8rem; font-weight:650; }
+    .enabled { color:#9af0b6; background:#143a2b; }
+    .disabled { color:#fecdd3; background:#49202c; }
+    button { border:1px solid transparent; border-radius:9px; padding:8px 11px; font:inherit; font-size:.88rem; font-weight:650; cursor:pointer; transition:filter .15s, transform .15s; }
+    button:hover { filter:brightness(1.12); }
+    button:active { transform:translateY(1px); }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-enable { background:#174b35; color:#a7f3c1; border-color:#286847; }
+    .btn-disable { background:#49202c; color:#fecdd3; border-color:#713344; }
+    .btn-delete { background:#52212b; color:#ffe1e5; border-color:#843440; }
+    .empty { color:var(--muted); text-align:center; padding:22px; }
+    @media (max-width:700px) { .cards { grid-template-columns:1fr; } main { padding:0 12px 30px; } section,.card { padding:15px; } header { padding:18px 16px; } }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>TrustVault Admin</h1>
+    <p>Administration · account and document management</p>
+  </div>
+  <a href="/dashboard.html">← Back to workspace</a>
+</header>
+<main>
+  <div id="status" role="status" aria-live="polite">Loading admin data…</div>
+  <div class="cards">
+    <div class="card"><p>Registered users</p><div class="number" id="usersCount">—</div></div>
+    <div class="card"><p>Documents</p><div class="number" id="documentsCount">—</div></div>
+    <div class="card"><p>Share records</p><div class="number" id="sharesCount">—</div></div>
+  </div>
+
+  <section>
+    <h2>Users</h2>
+    <p class="hint">Manage account access. Passwords and password hashes are never displayed. An administrator cannot disable their own account from this page.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Registered</th><th>Action</th></tr></thead>
+        <tbody id="usersBody"><tr><td class="empty" colspan="6">Loading users…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Documents</h2>
+    <p class="hint">Metadata overview. Delete is a permanent action and should remove the stored file as well as its database record. The delete button remains disabled until the backend endpoint is implemented and verified.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Owner</th><th>Size</th><th>Uploaded</th><th>Action</th></tr></thead>
+        <tbody id="documentsBody"><tr><td class="empty" colspan="5">Loading documents…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+  const byId = id => document.getElementById(id);
+  const safeText = value => String(value ?? "—");
+
+  async function readJson(response) {
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      throw new Error(detail || `Request failed (${response.status})`);
+    }
+    return response.json();
+  }
+  function getCsrfToken() {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : "";
+}
+
+  async function load() {
+    byId("status").textContent = "Loading admin data…";
+    byId("usersBody").replaceChildren();
+    byId("documentsBody").replaceChildren();
+
+    try {
+      const urls = ["/api/admin/overview", "/api/admin/users", "/api/admin/documents"];
+      const responses = await Promise.all(urls.map(url =>
+        fetch(url, { credentials: "same-origin", headers: { Accept: "application/json" } })
+      ));
+
+      if (responses.some(r => r.status === 401 || r.status === 403)) {
+        byId("status").textContent = "Admin access required. Sign in with the configured administrator account.";
+        return;
+      }
+      const [overview, users, docs] = await Promise.all(responses.map(readJson));
+
+      byId("usersCount").textContent = safeText(overview.userCount);
+      byId("documentsCount").textContent = safeText(overview.documentCount);
+      byId("sharesCount").textContent = safeText(overview.shareCount);
+
+      if (!Array.isArray(users) || !Array.isArray(docs)) {
+        throw new Error("Admin API returned data in an unexpected format.");
+      }
+
+      if (users.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = '<td class="empty" colspan="6">No users found.</td>';
+        byId("usersBody").appendChild(row);
+      }
+
+      users.forEach(user => {
+        const row = document.createElement("tr");
+        [user.username, user.email, user.role].forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = safeText(value);
+          row.appendChild(cell);
+        });
+
+        const statusCell = document.createElement("td");
+        const isEnabled = user.enabled !== false;
+        const pill = document.createElement("span");
+        pill.className = `status-pill ${isEnabled ? "enabled" : "disabled"}`;
+        pill.textContent = isEnabled ? "Enabled" : "Disabled";
+        statusCell.appendChild(pill);
+        row.appendChild(statusCell);
+
+        const registeredCell = document.createElement("td");
+        registeredCell.textContent = safeText(user.createdAt);
+        row.appendChild(registeredCell);
+
+        const actionCell = document.createElement("td");
+        const button = document.createElement("button");
+        const isSelf = user.username === window.trustVaultCurrentUsername;
+        const isAdmin = String(user.role || "").toUpperCase() === "ADMIN";
+        button.textContent = isEnabled ? "Disable" : "Enable";
+        button.className = isEnabled ? "btn-disable" : "btn-enable";
+
+        if (isSelf && isEnabled) {
+          button.disabled = true;
+          button.title = "You cannot disable your own account.";
+        } else if (isAdmin && isEnabled) {
+          button.disabled = true;
+          button.title = "Enabled administrator accounts cannot be disabled from this page.";
+        }
+
+        button.addEventListener("click", async () => {
+          const nextStatus = !isEnabled;
+          if (!window.confirm(`${nextStatus ? "Enable" : "Disable"} user "${safeText(user.username)}"?`)) return;
+          button.disabled = true;
+          try {
+            const response = await fetch(`/api/admin/users/${encodeURIComponent(user.id)}/status`, {
+              method: "PATCH",
+              credentials: "same-origin",
+              headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-XSRF-TOKEN": getCsrfToken()
+},
+              body: JSON.stringify({ enabled: nextStatus })
+            });
+            if (response.status === 403) {
+              throw new Error("Request rejected (403). Your Spring Security CSRF token may be required. Do not disable CSRF; we need to add the token correctly.");
+            }
+            await readJson(response);
+            byId("status").textContent = `User ${safeText(user.username)} ${nextStatus ? "enabled" : "disabled"}.`;
+            await load();
+          } catch (error) {
+            byId("status").textContent = error.message || "Could not update user status.";
+            button.disabled = false;
+          }
+        });
+        actionCell.appendChild(button);
+        row.appendChild(actionCell);
+        byId("usersBody").appendChild(row);
+      });
+
+      if (docs.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = '<td class="empty" colspan="5">No documents found.</td>';
+        byId("documentsBody").appendChild(row);
+      }
+
+      docs.forEach(doc => {
+        const row = document.createElement("tr");
+        [doc.filename, doc.owner, doc.size, doc.uploadedAt].forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = safeText(value);
+          row.appendChild(cell);
+        });
+        const actionCell = document.createElement("td");
+        const button = document.createElement("button");
+        
+button.textContent = "Delete";
+button.className = "btn-delete";
+
+button.addEventListener("click", async () => {
+    if (!confirm(`Permanently delete "${doc.filename}" owned by ${doc.owner}?`)) {
+        return;
+    }
+
+    button.disabled = true;
+
+    try {
+        const tokenMatch = document.cookie.match(
+            /(?:^|;\s*)XSRF-TOKEN=([^;]*)/
+        );
+        const csrfToken = tokenMatch
+            ? decodeURIComponent(tokenMatch[1])
+            : "";
+
+        const response = await fetch(
+            `/api/admin/documents/${encodeURIComponent(doc.id)}`,
+            {
+                method: "DELETE",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": csrfToken
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                response.status === 403
+                    ? "Access denied. Check your admin permission and CSRF token."
+                    : `Delete failed (${response.status}).`
+            );
+        }
+
+        byId("status").textContent =
+            `Deleted "${doc.filename}" successfully.`;
+
+        await load();
+    } catch (error) {
+        byId("status").textContent =
+            error.message || "Could not delete document.";
+        button.disabled = false;
+    }
+});
+
+        actionCell.appendChild(button);
+        row.appendChild(actionCell);
+        byId("documentsBody").appendChild(row);
+      });
+
+      byId("status").textContent = "Admin data loaded.";
+    } catch (error) {
+      byId("status").textContent = error.message || "Error loading admin data.";
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>

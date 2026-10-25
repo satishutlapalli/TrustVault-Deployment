@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | TrustVault</title>
+
+    <style>
+        :root {
+            --navy: #102347;
+            --blue: #315efb;
+            --text: #1d2a40;
+            --muted: #78859a;
+            --border: #dfe6f0;
+            --background: #f4f7fc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background: var(--background);
+        }
+
+        header {
+            height: 76px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-bottom: 1px solid #e7edf5;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--navy);
+            font-size: 23px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--navy);
+            color: white;
+            font-size: 22px;
+        }
+
+        .header-text {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        main {
+            min-height: calc(100vh - 136px);
+            display: grid;
+            place-items: center;
+            padding: 38px 18px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 38px 40px;
+            background: white;
+            border: 1px solid #e5ebf4;
+            border-radius: 20px;
+            box-shadow: 0 20px 55px rgba(16, 35, 71, 0.08);
+        }
+
+        .icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: #edf2ff;
+            color: var(--blue);
+            font-size: 27px;
+        }
+
+        h1 {
+            margin-top: 23px;
+            color: var(--navy);
+            font-size: 30px;
+            letter-spacing: -0.7px;
+        }
+
+        .subtitle {
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .field {
+            margin-top: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #28364c;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            height: 48px;
+            padding: 0 13px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            background: white;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.11);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 62px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .submit-button {
+            width: 100%;
+            height: 49px;
+            margin-top: 27px;
+            border: none;
+            border-radius: 9px;
+            background: var(--blue);
+            color: white;
+            font-size: 15px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background: #244ce0;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .error-message {
+            margin-top: 18px;
+            padding: 12px;
+            border: 1px solid #ffd3d3;
+            border-radius: 9px;
+            background: #fff0f0;
+            color: #a52727;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .register-text {
+            margin-top: 25px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .register-text a {
+            color: var(--blue);
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+        .security-note {
+            margin-top: 25px;
+            padding-top: 18px;
+            border-top: 1px solid #edf0f6;
+            color: #8590a2;
+            font-size: 11px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        footer {
+            padding: 18px;
+            color: #8490a3;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            header {
+                height: 68px;
+                padding: 0 20px;
+            }
+
+            .brand {
+                font-size: 20px;
+            }
+
+            .login-card {
+                padding: 29px 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="/" class="brand">
+            <span class="logo" aria-hidden="true">✓</span>
+            TrustVault
+        </a>
+
+        <span class="header-text">Secure document workspace</span>
+    </header>
+
+    <main>
+        <section class="login-card">
+            <div class="icon" aria-hidden="true">↗</div>
+
+            <h1>Welcome back</h1>
+            <p class="subtitle">
+                Sign in to continue to your TrustVault workspace.
+            </p>
+
+            <div id="loginError" class="error-message" role="alert" hidden>
+                Sign-in failed. Check your username and password and try again.
+            </div>
+
+            <form id="loginForm" action="/login" method="post">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="password-wrap">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            id="togglePassword">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button" id="loginButton">
+                    Sign in →
+                </button>
+            </form>
+
+            <p class="register-text">
+                Don't have an account?
+                <a href="/register.html">Create an account</a>
+            </p>
+
+            <div class="security-note">
+                TrustVault · Sign in using your registered credentials.
+                Never share your password.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © <span id="year"></span> TrustVault
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has("error")) {
+            document.getElementById("loginError").hidden = false;
+        }
+
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const password = document.getElementById("password");
+            const isHidden = password.type === "password";
+
+            password.type = isHidden ? "text" : "password";
+            this.textContent = isHidden ? "Hide" : "Show";
+        });
+
+        document.getElementById("loginForm").addEventListener("submit", function () {
+            const button = document.getElementById("loginButton");
+            button.disabled = true;
+            button.textContent = "Signing in...";
+        });
+    </script>
+</body>
+</html>
